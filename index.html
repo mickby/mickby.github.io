@@ -1,0 +1,227 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mick Byrne - Senior Software Engineer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        .hover-scale:hover {
+            transform: scale(1.02);
+        }
+        .hero-bg {
+            background-image: url('https://images.unsplash.com/photo-1516321310764-4d5d6f31672f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: overlay;
+            background-color: rgba(239, 68, 68, 0.7);
+        }
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            margin-right: 1rem;
+            color: #ef4444; /* Laravel red */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+    <header class="hero-bg text-white text-center py-16">
+        <h1 class="text-4xl font-bold mb-2">Mick Byrne</h1>
+        <p class="text-xl">Senior Software Engineer | Laravel & AWS Specialist</p>
+        <p class="mt-2">Knypersley, Staffordshire. ST8 7BL | <a href="mailto:phpmick@gmail.com" class="underline hover:text-red-200">phpmick@gmail.com</a></p>
+    </header>
+
+    <section class="max-w-4xl mx-auto my-8 p-6 bg-white rounded-lg shadow-lg hover-scale">
+        <div class="flex items-center mb-4">
+            <svg class="section-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm1-13h-2v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+            </svg>
+            <h2 class="text-2xl font-semibold text-red-600">Professional Summary</h2>
+        </div>
+        <p class="text-gray-700">Senior Engineer with over a decade of experience, specializing in developing APIs with Laravel. Graduated with First Class honors, earning every prize the university had to offer. Started as a Full Stack Developer and evolved into a backend specialist, with a strong focus on Clean Code principles. Recent projects have leveraged AWS-hosted microservices architectures, showcasing expertise in cloud computing. AWS Certified Cloud Practitioner and an active contributor to the local developer community.</p>
+    </section>
+
+    <section class="max-w-4xl mx-auto my-8 p-6 bg-white rounded-lg shadow-lg hover-scale">
+        <div class="flex items-center mb-4">
+            <svg class="section-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            <h2 class="text-2xl font-semibold text-red-600">Expertise</h2>
+        </div>
+        <ul class="list-disc pl-6 text-gray-700">
+            <li>Test-driven development of Laravel-based APIs</li>
+            <li>AWS Certified Cloud Practitioner</li>
+            <li>Requirements gathering, specification writing, and user story development</li>
+            <li>Integration with third-party APIs</li>
+            <li>Proficient in Python</li>
+        </ul>
+    </section>
+
+    <section class="max-w-4xl mx-auto my-8 p-6 bg-white rounded-lg shadow-lg hover-scale">
+        <div class="flex items-center mb-4">
+            <svg class="section-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7 7h10v1.5H7V7zm0 3h10v1.5H7V10zm0 3h7v1.5H7V13zm12-6h-2V5h-1.5v2h-2V5H12v2H9V5H7.5v2H5V5H3v2H1v12h22V7h-2V5h-1.5v2zm0 10.5H3V8.5h16v9z"/>
+            </svg>
+            <h2 class="text-2xl font-semibold text-red-600">Other Skills</h2>
+        </div>
+        <div class="flex flex-wrap gap-3">
+            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">Azure (AZ-900)</span>
+            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">TDD</span>
+            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">Docker</span>
+            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">Javascript (JQuery, AJAX, Vue.js)</span>
+            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">GIT</span>
+            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">REST</span>
+            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">OOP/MVC</span>
+            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">Agile/Jira</span>
+            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">AWS (Python CDK, Lambda, SQS, Eventbridge, API Gateway, S3, RDS)</span>
+            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm">MySQL/PostgreSQL</span>
+        </div>
+    </section>
+
+    <section class="max-w-4xl mx-auto my-8 p-6 bg-white rounded-lg shadow-lg hover-scale">
+        <div class="flex items-center mb-4">
+            <svg class="section-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zm-2-1h-6v-2h6v2zm0-4h-6v-2h6v2zm-8 0H4v-2h6v2zm0 4H4v-2h6v2zm8-8H4V7h14v2z"/>
+            </svg>
+            <h2 class="text-2xl font-semibold text-red-600">Employment History</h2>
+        </div>
+        <div class="mb-6">
+            <h3 class="text-xl font-semibold">Senior Software Engineer - YourParkingSpace (Remote)</h3>
+            <p class="text-gray-600 italic">March 2025 - July 2025</p>
+            <ul class="list-disc pl-6 text-gray-700">
+                <li>Improved and maintained a Laravel API supporting parking enforcement functionality</li>
+                <li>Enhanced and extended Vue.js portals integrated with the API</li>
+                <li>Conducted thorough code reviews to ensure code quality and consistency</li>
+            </ul>
+        </div>
+        <div class="mb-6">
+            <h3 class="text-xl font-semibold">Senior Software Engineer - Splend UK (Remote)</h3>
+            <p class="text-gray-600 italic">February 2023 - March 2025</p>
+            <ul class="list-disc pl-6 text-gray-700">
+                <li>Leading the development of a new customer onboarding system using AWS Lambdas (Python and TS/React)</li>
+                <li>Implementing BitBucket CI pipeline</li>
+                <li>Enhancing legacy systems (Laravel) and writing requirements/architecting new systems</li>
+                <li>Mentoring other developers</li>
+            </ul>
+        </div>
+        <div class="mb-6">
+            <h3 class="text-xl font-semibold">Senior Backend Developer - Osprey Flight Solutions (Remote)</h3>
+            <p class="text-gray-600 italic">February 2022 - January 2023</p>
+            <ul class="list-disc pl-6 text-gray-700">
+                <li>Writing a new version of aviation risk management software using microservices (Laravel)</li>
+                <li>Finding and fixing bugs in legacy applications</li>
+                <li>Performing code reviews and mentoring other developers</li>
+                <li>Writing AWS Lambdas (Python)</li>
+            </ul>
+        </div>
+        <div class="mb-6">
+            <h3 class="text-xl font-semibold">Senior Software Developer - Tribepad (Remote)</h3>
+            <p class="text-gray-600 italic">July 2020 - January 2022</p>
+            <ul class="list-disc pl-6 text-gray-700">
+                <li>Developing a CRM API (Laravel) which integrated into a legacy system and provided functionality to manage campaigns (tracked landing pages), send bulk email/SMS (Nexmo, Vonage) and threaded emails (Sendgrid/AWS)</li>
+                <li>Bug Fixing legacy applications</li>
+                <li>Performing code reviews</li>
+            </ul>
+        </div>
+        <div class="mb-6">
+            <h3 class="text-xl font-semibold">Lead Software Developer - Bytes Software Services (Remote)</h3>
+            <p class="text-gray-600 italic">November 2017 - July 2020</p>
+            <ul class="list-disc pl-6 text-gray-700">
+                <li>Using TDD to write Laravel applications and microservices</li>
+                <li>Mentoring and performing code reviews for Junior Developers</li>
+                <li>Analysis of cloud usage data using Python/Pandas</li>
+            </ul>
+        </div>
+        <div class="mb-6">
+            <h3 class="text-xl font-semibold">Systems Developer - Churchill China PLC</h3>
+            <p class="text-gray-600 italic">November 2015 - November 2017</p>
+            <ul class="list-disc pl-6 text-gray-700">
+                <li>Selected suitable technology for developing software solutions</li>
+                <li>Gathered requirements, wrote specifications, developed and deployed web applications using PHP (Laravel) MySQL and Javascript (JQuery and Vue.js)</li>
+                <li>Developed a suite of applications to replace legacy systems (Laravel)</li>
+                <li>Automated manual tasks which have saved several man-hours, every day</li>
+                <li>Built a live dashboard system which is now displayed throughout the factory and warehouse</li>
+                <li>Developed a centralised application for storing user credentials and managing authentication and authorisation</li>
+            </ul>
+        </div>
+        <div class="mb-6">
+            <h3 class="text-xl font-semibold">Prior Employment</h3>
+            <p class="text-gray-600 italic">Various roles in the I.T industry</p>
+            <ul class="list-disc pl-6 text-gray-700">
+                <li>Writing software applications for internal/external use mainly using Visual Basic and SQL Server</li>
+                <li>Supporting both software and hardware</li>
+                <li>Writing technical documentation</li>
+                <li>Training staff in the use of software</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="max-w-4xl mx-auto my-8 p-6 bg-white rounded-lg shadow-lg hover-scale">
+        <div class="flex items-center mb-4">
+            <svg class="section-icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 3v4c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3H5zm2-2h10c1.1 0 2 .9 2 2v4c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2V3c0-1.1.9-2 2-2zm-2 10v10c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V11H5zm2-2h10c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H7c-1.1 0-2-.9-2-2V11c0-1.1.9-2 2-2z"/>
+            </svg>
+            <h2 class="text-2xl font-semibold text-red-600">Education</h2>
+        </div>
+        <ul class="list-disc pl-6 text-gray-700">
+            <li>Cert. of HE (Physics) - Keele University, 2012</li>
+            <li>Cert. of Natural Sciences - Open University, 2011</li>
+            <li>BSc Applied Geology (First Class) - Staffordshire University, 2006</li>
+            <li>HNC Computing - Staffordshire University, 1999</li>
+            <li>A Level Computing - Stoke on Trent College, 1997</li>
+            <li>8 GCSEs - Westlands, Congleton, 1990</li>
+        </ul>
+    </section>
+
+    <footer class="bg-red-600 text-white text-center py-6">
+        <p>Contact me at <a href="mailto:phpmick@gmail.com" class="underline hover:text-red-200">phpmick@gmail.com</a> for job opportunities.</p>
+        <p>&copy; 2025 Mick Byrne. All rights reserved.</p>
+    </footer>
+</body>
+</html>
